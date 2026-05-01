@@ -14,15 +14,12 @@ export default function Home() {
   const [faceUrl, setFaceUrl] = useState(null);
   const fileInputRef = useRef(null);
 
-  // تحديث المقاس تلقائياً بناءً على المدخلات
   useEffect(() => {
-    setSize(getRecommendedSize(height, weight, fit));
-  }, [height, weight, fit]);
+    setSize(getRecommendedSize(height, weight));
+  }, [height, weight]);
 
   return (
     <main style={{ width: '100vw', height: '100vh', display: 'flex', backgroundColor: '#050505', color: '#00FFFF', fontFamily: 'monospace' }}>
-      
-      {/* Sidebar Area */}
       <div style={{ width: '350px', padding: '30px', borderRight: '1px solid #1a1a1a', background: 'black', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h1 style={{ fontSize: '24px', letterSpacing: '4px', color: 'white' }}>SWAY<span style={{ color: '#00FFFF' }}>3D</span></h1>
         
@@ -45,17 +42,17 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
-          <label>RECOMMENDED SIZE: <span style={{ color: 'white', fontSize: '20px' }}>{size}</span></label>
+        <div style={{ padding: '20px', border: '1px solid #333', borderRadius: '4px' }}>
+          <label style={{ fontSize: '12px' }}>AI RECOMMENDATION:</label>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>SIZE {size}</div>
         </div>
 
-        <button onClick={() => fileInputRef.current.click()} style={{ width: '100%', padding: '15px', background: 'transparent', border: '2px dashed #00FFFF', color: '#00FFFF', cursor: 'pointer', fontWeight: 'bold' }}>UPLOAD YOUR FACE</button>
+        <button onClick={() => fileInputRef.current.click()} style={{ width: '100%', padding: '15px', background: 'transparent', border: '2px dashed #00FFFF', color: '#00FFFF', cursor: 'pointer', fontWeight: 'bold' }}>UPLOAD FACE</button>
         <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={(e) => setFaceUrl(URL.createObjectURL(e.target.files[0]))} />
 
-        <div style={{ marginTop: 'auto', color: '#444', fontSize: '12px' }}>WE-WAVE-AGENCY PORTAL v2.0</div>
+        <div style={{ marginTop: 'auto', color: '#444', fontSize: '10px' }}>WE-WAVE-AGENCY © 2026</div>
       </div>
 
-      {/* 3D Canvas Area */}
       <div style={{ flex: 1, position: 'relative' }}>
         <Viewer currentSize={size} tshirtColor={color} faceUrl={faceUrl} fitType={fit} />
       </div>
