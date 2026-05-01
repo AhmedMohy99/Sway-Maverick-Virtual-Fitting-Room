@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { SIZE_DATA } from '../lib/sizeCharts';
 
 function Model({ currentSize, tshirtColor, faceUrl, fitType }) {
-  const { scene } = useGLTF('/avatar.glb'); // تأكد أن الموديل في public/avatar.glb
+  const { scene } = useGLTF('/avatar.glb');
 
   const scale = useMemo(() => {
     const base = SIZE_DATA[fitType]["S"];
@@ -15,7 +15,6 @@ function Model({ currentSize, tshirtColor, faceUrl, fitType }) {
   }, [currentSize, fitType]);
 
   useEffect(() => {
-    // تطبيق الوجه
     if (faceUrl) {
       new THREE.TextureLoader().load(faceUrl, (tex) => {
         tex.flipY = false;
@@ -28,7 +27,6 @@ function Model({ currentSize, tshirtColor, faceUrl, fitType }) {
       });
     }
 
-    // تطبيق التيشرت
     scene.traverse((c) => {
       if (c.isMesh && c.name === 'TShirt') {
         c.material.color.set(tshirtColor);
