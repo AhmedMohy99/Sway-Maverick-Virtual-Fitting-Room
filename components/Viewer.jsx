@@ -4,7 +4,6 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Stage, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 
-// جدول مقاسات الأوفرسايز (The Maverick Phoenix)
 const SIZE_GUIDE = {
   "S": { width: 54, length: 72.5, label: "1(S)" },
   "M": { width: 57, length: 73.5, label: "2(M)" },
@@ -13,10 +12,8 @@ const SIZE_GUIDE = {
 };
 
 function SwayModel({ currentSize, tshirtColor, faceUrl }) {
-  // تأكد أن ملف الـ 3D موجود في فولدر public باسم avatar.glb
   const { scene } = useGLTF('/avatar.glb');
 
-  // حساب الحجم بناءً على المقاس S
   const scale = useMemo(() => {
     const base = SIZE_GUIDE["S"];
     const target = SIZE_GUIDE[currentSize] || SIZE_GUIDE["S"];
@@ -24,7 +21,6 @@ function SwayModel({ currentSize, tshirtColor, faceUrl }) {
   }, [currentSize]);
 
   useEffect(() => {
-    // 1. تطبيق نسيج الوجه إذا تم رفعه
     if (faceUrl) {
       const textureLoader = new THREE.TextureLoader();
       textureLoader.load(faceUrl, (texture) => {
@@ -42,7 +38,6 @@ function SwayModel({ currentSize, tshirtColor, faceUrl }) {
       });
     }
 
-    // 2. تطبيق لون ومقاس التيشرت برمجياً
     scene.traverse((child) => {
       if (child.isMesh && child.name === 'TShirt') {
         child.material = new THREE.MeshStandardMaterial({
@@ -51,7 +46,6 @@ function SwayModel({ currentSize, tshirtColor, faceUrl }) {
           metalness: 0.1
         });
         child.material.needsUpdate = true;
-        // تطبيق الحجم الجديد للتيشرت
         child.scale.set(scale[0], scale[1], scale[2]);
       }
     });
@@ -73,5 +67,3 @@ export default function Viewer({ currentSize, tshirtColor, faceUrl }) {
     </Canvas>
   );
 }
-
-useGLTF.preload('/avatar.glb');
