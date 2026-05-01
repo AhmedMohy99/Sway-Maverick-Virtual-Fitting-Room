@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Sway Maverick | Virtual Fitting Room',
-  description: '3D Virtual Fitting Room for Sway Maverick technical streetwear.',
+  description: 'Powered by We-Wave-Agency',
 }
 
 export default function RootLayout({ children }) {
