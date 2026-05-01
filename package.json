@@ -1,19 +1,25 @@
 {
-  "name": "sway-3d-store-fit",
+  "name": "sway-maverick-3d-fitting-room",
   "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "three": "latest",
-    "@react-three/fiber": "latest",
-    "@react-three/drei": "latest",
-    "lucide-react": "latest"
+    "next": "14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.164.1",
+    "@react-three/fiber": "^8.16.6",
+    "@react-three/drei": "^9.105.6",
+    "lucide-react": "^0.379.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3"
   }
 }
