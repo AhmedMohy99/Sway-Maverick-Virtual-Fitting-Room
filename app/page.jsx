@@ -2,7 +2,6 @@
 import React, { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
-// استدعاء الـ Viewer بشكل ديناميكي لمنع أخطاء الـ SSR في Next.js
 const Viewer = dynamic(() => import('../components/Viewer'), { 
   ssr: false,
   loading: () => (
@@ -42,11 +41,9 @@ export default function Home() {
   return (
     <main style={{ width: '100vw', height: '100vh', backgroundColor: '#050505', color: '#00FFFF', fontFamily: 'sans-serif', display: 'flex', overflow: 'hidden' }}>
       
-      {/* UI Sidebar */}
       <div style={{ width: '300px', padding: '40px', borderRight: '1px solid #8A2BE2', display: 'flex', flexDirection: 'column', gap: '30px', background: 'rgba(0,0,0,0.8)', zIndex: 10 }}>
         <h2 style={{ letterSpacing: '2px', color: '#8A2BE2', margin: 0 }}>SWAY MAVERICK</h2>
         
-        {/* Color Selector */}
         <div>
           <p style={{ fontSize: '12px', marginBottom: '10px', letterSpacing: '1px' }}>SELECT COLOR</p>
           <div style={{ display: 'flex', gap: '15px' }}>
@@ -64,7 +61,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Size Selector */}
         <div>
           <p style={{ fontSize: '12px', marginBottom: '10px', letterSpacing: '1px' }}>SIZE (OVERSIZED FIT)</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -84,7 +80,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Face Mapping */}
         <div>
           <p style={{ fontSize: '12px', marginBottom: '10px', letterSpacing: '1px' }}>FACE MAPPING</p>
           <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFaceUpload} style={{ display: 'none' }} />
@@ -105,7 +100,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 3D Canvas Area */}
       <div style={{ flex: 1, position: 'relative' }}>
         <Viewer currentSize={size} tshirtColor={color} faceUrl={faceUrl} />
       </div>
