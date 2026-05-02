@@ -2,15 +2,40 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 
-export default function CyberButton({ children, onClick, className = '' }: { children: React.ReactNode, onClick?: () => void, className?: string }) {
+export default function CyberButton({ 
+  children, 
+  onClick, 
+  className = '' 
+}: { 
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+}) {
   return (
     <motion.button
-      whileHover={{ scale: 1.02, boxShadow: "0px 0px 20px rgba(0,255,255,0.4)" }}
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`w-full bg-[#00FFFF] text-black font-bold py-4 uppercase tracking-[0.2em] transition-colors hover:bg-white ${className}`}
+      className={`
+        relative w-full overflow-hidden
+        bg-[#00FFFF] text-black 
+        font-bold py-5 
+        uppercase tracking-[0.2em] text-sm
+        transition-all duration-300
+        hover:bg-white hover:shadow-2xl hover:shadow-[#00FFFF]/50
+        active:shadow-none
+        ${className}
+      `}
     >
-      {children}
+      {/* Shine Effect */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+        initial={{ x: '-100%' }}
+        whileHover={{ x: '100%' }}
+        transition={{ duration: 0.6 }}
+      />
+      
+      <span className="relative z-10">{children}</span>
     </motion.button>
   );
 }
