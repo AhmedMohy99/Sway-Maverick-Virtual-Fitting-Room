@@ -22,20 +22,26 @@ function Model({ currentSize, tshirtColor, faceUrl, fitType }) {
       if (child.isMesh) {
         const name = child.name.toLowerCase();
 
-        // 1. عزل التيشرت: نطبق اللون والمقاس هنا "فقط"
-        if (name === 'tshirt' || (name.includes('shirt') && !name.includes('skin'))) {
+        // 🌟 السر هنا: فك الارتباط (Cloning the Material)
+        // ده بيمنع اللون إنه "يسيح" على بقية الجسم اللي بيشارك نفس الماتيريال
+        if (!child.userData.isMaterialCloned) {
+          child.material = child.material.clone();
+          child.userData.isMaterialCloned = true;
+        }
+
+        // 1. عزل التيشرت وتلوينه وتغيير مقاسه
+        if (name === 'tshirt' || name.includes('shirt')) {
           child.material.color.set(tshirtColor);
-          child.material.emissive = new THREE.Color(0x000000); // منع التيشرت من التوهج الزائد
+          child.material.emissive.setHex(0x000000); // إغلاق أي توهج
           child.scale.set(scale[0], scale[1], scale[2]);
         } 
         
-        // 2. حماية بقية الجسم: نرجع كل الأجزاء لحالتها الأصلية (Original Look)
+        // 2. حماية بقية الجسم والبنطلون (استعادة الـ Original Look)
         else {
-          // استعادة لون التكستشر الأصلي ومنع أي صبغة Aqua
-          child.material.color.set(0xffffff); 
-          child.material.emissive = new THREE.Color(0x000000); // إطفاء أي لون "منور" في الجسم
+          child.material.color.setHex(0xffffff); // الأبيض هنا بيظهر صورة الجلد والبنطلون الأصلية
+          child.material.emissive.setHex(0x000000);
           
-          // تطبيق الوش لو مرفوع
+          // 3. تطبيق الوش (Face Mapping)
           if (faceUrl && (name.includes('head') || name.includes('face'))) {
             new THREE.TextureLoader().load(faceUrl, (tex) => {
               tex.flipY = false;
@@ -57,20 +63,16 @@ export default function Viewer(props) {
     <Canvas shadows gl={{ antialias: true }}>
       <PerspectiveCamera makeDefault position={[0, 1.2, 4]} fov={35} />
       
-      <Suspense fallback={<Html center><div style={{color: '#00FFFF'}}>SYNCING SWAY...</div></Html>}>
-        {/* إضاءة Studio محايدة لتقليل اللون الأخضر/الأزرق في المشهد */}
-        <Stage environment="studio" intensity={0.4} adjustCamera={false}>
+      <Suspense fallback={<Html center><div style={{color: '#00FFFF'}}>ISOLATING MESHES...</div></Html>}>
+        <Stage environment="studio" intensity={0.5} adjustCamera={false}>
           <Model {...props} />
         </Stage>
       </Suspense>
 
-      {/* ظل أسود طبيعي بدل الظل الملون */}
-      <ContactShadows position={[0, -1, 0]} opacity={0.5} scale={10} blur={2} color="#000000" />
-      
+      <ContactShadows position={[0, -1, 0]} opacity={0.6} scale={10} blur={2} color="#000000" />
       <OrbitControls enablePan={false} minDistance={1.5} maxDistance={5} />
 
-      {/* إضاءة بيضاء نقية لضمان الألوان الأصلية */}
-      <ambientLight intensity={0.6} />
+      <ambientLight intensity={0.7} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} color="#ffffff" />
     </Canvas>
   );
