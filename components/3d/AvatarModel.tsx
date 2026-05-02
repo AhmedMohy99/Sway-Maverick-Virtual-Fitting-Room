@@ -2,16 +2,15 @@
 import { useGLTF, useTexture } from '@react-three/drei';
 import { useEffect } from 'react';
 import * as THREE from 'three';
-import { useSwayStore } from '@/lib/store';
+import { useSwayStore } from '../../lib/store';
 
 export default function AvatarModel() {
   const { fitType, activeTextureUrl, faceTextureUrl } = useSwayStore();
   
-  // تأكد إن الموديل ده موجود في public/models واسمه avatar.glb أو غير اسمه حسب المتاح معاك حالياً
-  const modelPath = '/models/base_oversized.glb'; 
+  // غير اسم avatar.glb لو انت مسميه حاجة تانية في فولدر public
+  const modelPath = '/avatar.glb'; 
   const { scene } = useGLTF(modelPath);
   
-  // لو مفيش صورة، هيستخدم لون أبيض سادة مؤقتاً
   const clothingTexture = activeTextureUrl ? useTexture(activeTextureUrl) : null;
   if (clothingTexture) {
     clothingTexture.flipY = false;
