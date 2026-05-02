@@ -1,32 +1,38 @@
 'use client';
 import { useGLTF, useTexture } from '@react-three/drei';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { useSwayStore } from '../../lib/store';
 
 export default function AvatarModel() {
   const { fitType, activeTextureUrl, faceTextureUrl } = useSwayStore();
   
-  // غير اسم avatar.glb لو انت مسميه حاجة تانية في فولدر public
   const modelPath = '/avatar.glb'; 
   const { scene } = useGLTF(modelPath);
   
-  const clothingTexture = activeTextureUrl ? useTexture(activeTextureUrl) : null;
-  if (clothingTexture) {
-    clothingTexture.flipY = false;
-    clothingTexture.colorSpace = THREE.SRGBColorSpace;
-  }
+  // Memoize texture loading for performance
+  const clothingTexture = useMemo(() => {
+    if (!activeTextureUrl) return null;
+    const texture = new THREE.TextureLoader().load(activeTextureUrl);
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  }, [activeTextureUrl]);
 
-  const faceTexture = faceTextureUrl ? useTexture(faceTextureUrl) : null;
-  if (faceTexture) {
-    faceTexture.flipY = false;
-    faceTexture.colorSpace = THREE.SRGBColorSpace;
-  }
+  const faceTexture = useMemo(() => {
+    if (!faceTextureUrl) return null;
+    const texture = new THREE.TextureLoader().load(faceTextureUrl);
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  }, [faceTextureUrl]);
 
   useEffect(() => {
     if (!scene) return;
+    
     scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
+        // Clone material only once per mesh
         if (!child.userData.isMaterialSeparated) {
           child.material = child.material.clone();
           child.userData.isMaterialSeparated = true;
@@ -46,9 +52,16 @@ export default function AvatarModel() {
           child.material.roughness = 0.5;
           child.material.needsUpdate = true;
         }
+
+        // Enable shadows
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
     });
   }, [scene, clothingTexture, faceTexture]);
 
   return <primitive object={scene} />;
 }
+
+// Preload the model
+useGLTF.preload('/avatar.glb');
