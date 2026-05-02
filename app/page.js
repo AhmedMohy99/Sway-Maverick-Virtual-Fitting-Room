@@ -1,61 +1,84 @@
+// app/page.tsx
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { getRecommendedSize } from '../lib/sizeCharts';
+import { useEffect } from 'react';
+import FittingRoom from '@/components/3d/FittingRoom';
+import { useSwayStore } from '@/lib/store';
+import { getSmartRecommendation } from '@/lib/ai-fitting';
+import { motion } from 'framer-motion';
 
-const Viewer = dynamic(() => import('../components/Viewer'), { ssr: false });
+export default function ProductPage() {
+  const { height, weight, fitType, recommendedSize, setBodyData, updateRecommendation } = useSwayStore();
 
-export default function Home() {
-  const [size, setSize] = useState("M");
-  const [color, setColor] = useState("#00FFFF");
-  const [fit, setFit] = useState('oversized');
-  const [height, setHeight] = useState(170);
-  const [weight, setWeight] = useState(70);
-  const [faceUrl, setFaceUrl] = useState(null);
-  const fileInputRef = useRef(null);
-
+  // Re-run AI Recommendation when body data changes
   useEffect(() => {
-    setSize(getRecommendedSize(height, weight));
-  }, [height, weight]);
+    const rec = getSmartRecommendation(height, weight, fitType);
+    updateRecommendation(rec);
+  }, [height, weight, fitType, updateRecommendation]);
 
   return (
-    <main style={{ width: '100vw', height: '100vh', display: 'flex', backgroundColor: '#050505', color: '#00FFFF', fontFamily: 'monospace' }}>
-      <div style={{ width: '350px', padding: '30px', borderRight: '1px solid #1a1a1a', background: 'black', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <h1 style={{ fontSize: '24px', letterSpacing: '4px', color: 'white' }}>SWAY<span style={{ color: '#00FFFF' }}>3D</span></h1>
+    <main className="flex w-full h-screen bg-black text-white font-mono overflow-hidden">
+      
+      {/* LEFT: 3D Immersive Viewer */}
+      <section className="w-[60%] h-full relative border-r border-[#111]">
+        <FittingRoom />
+      </section>
+
+      {/* RIGHT: Product Controls */}
+      <section className="w-[40%] h-full overflow-y-auto p-12 flex flex-col gap-8 custom-scrollbar">
         
-        <div>
-          <label>FIT TYPE:</label>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-            <button onClick={() => setFit('oversized')} style={{ flex: 1, padding: '10px', background: fit === 'oversized' ? '#00FFFF' : 'transparent', color: fit === 'oversized' ? 'black' : '#00FFFF', border: '1px solid #00FFFF', cursor: 'pointer' }}>OVERSIZED</button>
-            <button onClick={() => setFit('regular')} style={{ flex: 1, padding: '10px', background: fit === 'regular' ? '#00FFFF' : 'transparent', color: fit === 'regular' ? 'black' : '#00FFFF', border: '1px solid #00FFFF', cursor: 'pointer' }}>REGULAR</button>
+        <div className="border-b border-[#222] pb-6">
+          <h1 className="text-3xl font-black tracking-widest uppercase">The Maverick Phoenix</h1>
+          <p className="text-[#00FFFF] mt-2 tracking-widest text-sm">730 EGP</p>
+        </div>
+
+        {/* Digital Twin Inputs */}
+        <div className="space-y-4">
+          <h3 className="text-[11px] text-gray-400 tracking-[0.2em]">YOUR MEASUREMENTS</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-[#0a0a0a] border border-[#222] p-3 flex justify-between items-center focus-within:border-[#00FFFF] transition-colors">
+              <span className="text-xs text-gray-500">HEIGHT (CM)</span>
+              <input 
+                type="number" 
+                value={height} 
+                onChange={(e) => setBodyData(Number(e.target.value), weight)}
+                className="bg-transparent text-right outline-none w-16 text-[#00FFFF]"
+              />
+            </div>
+            <div className="bg-[#0a0a0a] border border-[#222] p-3 flex justify-between items-center focus-within:border-[#00FFFF] transition-colors">
+              <span className="text-xs text-gray-500">WEIGHT (KG)</span>
+              <input 
+                type="number" 
+                value={weight} 
+                onChange={(e) => setBodyData(height, Number(e.target.value))}
+                className="bg-transparent text-right outline-none w-16 text-[#00FFFF]"
+              />
+            </div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          <div>
-            <label>HEIGHT (CM)</label>
-            <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#00FFFF', marginTop: '5px' }} />
-          </div>
-          <div>
-            <label>WEIGHT (KG)</label>
-            <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#00FFFF', marginTop: '5px' }} />
-          </div>
-        </div>
+        {/* AI Recommendation Output */}
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          key={recommendedSize}
+          className="border border-[#00FFFF] bg-[#00FFFF]/5 p-6 relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#00FFFF]"></div>
+          <h3 className="text-[10px] text-[#00FFFF] mb-2 tracking-widest">AI RECOMMENDATION</h3>
+          <p className="text-lg font-bold">{recommendedSize}</p>
+        </motion.div>
 
-        <div style={{ padding: '20px', border: '1px solid #333', borderRadius: '4px' }}>
-          <label style={{ fontSize: '12px' }}>AI RECOMMENDATION:</label>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>SIZE {size}</div>
-        </div>
+        {/* Face Mapping Trigger */}
+        <button className="w-full border border-dashed border-gray-600 hover:border-[#00FFFF] hover:text-[#00FFFF] transition-all p-4 text-xs tracking-[0.2em] uppercase">
+          [+] Upload Face Map
+        </button>
 
-        <button onClick={() => fileInputRef.current.click()} style={{ width: '100%', padding: '15px', background: 'transparent', border: '2px dashed #00FFFF', color: '#00FFFF', cursor: 'pointer', fontWeight: 'bold' }}>UPLOAD FACE</button>
-        <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={(e) => setFaceUrl(URL.createObjectURL(e.target.files[0]))} />
+        {/* Add to Cart */}
+        <button className="mt-auto w-full bg-[#00FFFF] text-black font-bold py-5 tracking-[0.2em] hover:bg-white transition-colors uppercase text-sm shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+          Add To Cart // 730 EGP
+        </button>
 
-        <div style={{ marginTop: 'auto', color: '#444', fontSize: '10px' }}>WE-WAVE-AGENCY © 2026</div>
-      </div>
-
-      <div style={{ flex: 1, position: 'relative' }}>
-        <Viewer currentSize={size} tshirtColor={color} faceUrl={faceUrl} fitType={fit} />
-      </div>
+      </section>
     </main>
   );
 }
