@@ -1,6 +1,6 @@
 'use client';
 import { useRef } from 'react';
-import { useSwayStore } from '@/lib/store';
+import { useSwayStore } from '../../lib/store';
 
 export default function FaceUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
