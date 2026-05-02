@@ -19,131 +19,168 @@ export default function ProductPage() {
   }, [height, weight, fitType, updateRecommendation]);
 
   return (
-    <main className="flex flex-col lg:flex-row w-full h-screen bg-black text-white font-mono overflow-hidden">
+    <main className="flex flex-col lg:flex-row w-full h-screen bg-black text-white overflow-hidden">
       
       {/* LEFT: 3D Viewer */}
-      <section className="w-full lg:w-[60%] h-[50vh] lg:h-full relative border-b lg:border-r border-[#111]">
+      <section className="w-full lg:w-[60%] h-[50vh] lg:h-full relative border-b lg:border-r border-[#1a1a1a]">
         <FittingRoom />
         
-        {/* Auto-Rotate Toggle - Positioned over 3D view */}
-        <div className="absolute top-4 left-4 z-10">
+        {/* Auto-Rotate Toggle */}
+        <div className="absolute top-6 left-6 z-10">
           <AutoRotateToggle />
         </div>
       </section>
 
       {/* RIGHT: Product Controls */}
-      <section className="w-full lg:w-[40%] h-[50vh] lg:h-full overflow-y-auto p-6 lg:p-12 flex flex-col gap-8 custom-scrollbar">
-        
-        {/* Product Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="border-b border-[#222] pb-6"
-        >
-          <h1 className="text-2xl lg:text-3xl font-black tracking-widest uppercase bg-gradient-to-r from-white to-[#00FFFF] bg-clip-text text-transparent">
-            The Maverick Phoenix
-          </h1>
-          <div className="flex items-baseline gap-3 mt-2">
-            <p className="text-[#00FFFF] tracking-widest text-lg font-bold">730 EGP</p>
-            <span className="text-xs text-gray-500 line-through">950 EGP</span>
-          </div>
-        </motion.div>
-
-        {/* Measurements Section */}
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-4"
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-4 bg-[#00FFFF]" />
-            <h3 className="text-[11px] text-gray-400 tracking-[0.2em] uppercase">Your Measurements</h3>
-          </div>
+      <section className="w-full lg:w-[40%] h-[50vh] lg:h-full overflow-y-auto custom-scrollbar">
+        <div className="p-6 lg:p-10 flex flex-col gap-8 max-w-xl mx-auto">
           
-          <div className="grid grid-cols-2 gap-4">
-            {/* Height Input */}
-            <div className="group bg-[#0a0a0a] border border-[#222] p-4 flex flex-col gap-2 focus-within:border-[#00FFFF] transition-all hover:border-[#00FFFF]/50">
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Ruler className="w-3 h-3" />
-                <span>HEIGHT (CM)</span>
-              </div>
-              <input 
-                type="number" 
-                value={height} 
-                onChange={(e) => setBodyData(Number(e.target.value), weight)}
-                className="bg-transparent outline-none text-2xl font-bold text-[#00FFFF] w-full"
-                min="140"
-                max="220"
-              />
+          {/* Product Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-3"
+          >
+            <h1 className="text-3xl lg:text-4xl font-black tracking-tight uppercase leading-tight">
+              The Maverick <span className="text-[#00FFFF]">Phoenix</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <span className="text-2xl font-bold text-[#00FFFF]">730 EGP</span>
+              <span className="text-sm text-gray-500 line-through">950 EGP</span>
+              <span className="px-3 py-1 bg-[#00FFFF]/10 border border-[#00FFFF]/30 text-[#00FFFF] text-xs font-bold tracking-wider">
+                -23%
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-[#00FFFF]/30 to-transparent" />
+
+          {/* Measurements Section */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="space-y-5"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-5 bg-[#00FFFF] rounded-full" />
+              <h3 className="text-sm font-bold tracking-widest uppercase text-gray-400">
+                Your Measurements
+              </h3>
             </div>
             
-            {/* Weight Input */}
-            <div className="group bg-[#0a0a0a] border border-[#222] p-4 flex flex-col gap-2 focus-within:border-[#00FFFF] transition-all hover:border-[#00FFFF]/50">
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Weight className="w-3 h-3" />
-                <span>WEIGHT (KG)</span>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Height Input */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00FFFF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                <div className="relative bg-[#0a0a0a] border border-[#222] p-5 transition-all duration-300 group-hover:border-[#00FFFF]/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Ruler className="w-4 h-4 text-[#00FFFF]" />
+                    <span className="text-xs tracking-wider text-gray-500 uppercase">Height</span>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <input 
+                      type="number" 
+                      value={height} 
+                      onChange={(e) => setBodyData(Number(e.target.value), weight)}
+                      className="bg-transparent outline-none text-3xl font-bold text-white w-full appearance-none"
+                      min="140"
+                      max="220"
+                    />
+                    <span className="text-sm text-gray-500">cm</span>
+                  </div>
+                </div>
               </div>
-              <input 
-                type="number" 
-                value={weight} 
-                onChange={(e) => setBodyData(height, Number(e.target.value))}
-                className="bg-transparent outline-none text-2xl font-bold text-[#00FFFF] w-full"
-                min="40"
-                max="150"
-              />
+              
+              {/* Weight Input */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00FFFF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                <div className="relative bg-[#0a0a0a] border border-[#222] p-5 transition-all duration-300 group-hover:border-[#00FFFF]/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Weight className="w-4 h-4 text-[#00FFFF]" />
+                    <span className="text-xs tracking-wider text-gray-500 uppercase">Weight</span>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <input 
+                      type="number" 
+                      value={weight} 
+                      onChange={(e) => setBodyData(height, Number(e.target.value))}
+                      className="bg-transparent outline-none text-3xl font-bold text-white w-full appearance-none"
+                      min="40"
+                      max="150"
+                    />
+                    <span className="text-sm text-gray-500">kg</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* AI Recommendation */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          key={recommendedSize}
-          transition={{ delay: 0.2 }}
-          className="relative border border-[#00FFFF] bg-gradient-to-br from-[#00FFFF]/10 to-transparent p-6 overflow-hidden group"
-        >
-          <div className="absolute top-0 left-0 w-1 h-full bg-[#00FFFF]" />
-          <div className="absolute top-0 right-0 w-20 h-20 bg-[#00FFFF]/20 blur-3xl group-hover:bg-[#00FFFF]/30 transition-all" />
-          
-          <div className="relative z-10">
-            <h3 className="text-[10px] text-[#00FFFF] mb-2 tracking-widest flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#00FFFF] rounded-full animate-pulse" />
-              AI RECOMMENDATION
-            </h3>
-            <p className="text-xl font-bold tracking-wide">{recommendedSize}</p>
-          </div>
-        </motion.div>
+          {/* AI Recommendation */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            key={recommendedSize}
+            transition={{ delay: 0.2 }}
+            className="relative overflow-hidden"
+          >
+            {/* Glow Effect */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#00FFFF]/20 rounded-full blur-3xl" />
+            
+            <div className="relative border border-[#00FFFF]/30 bg-gradient-to-br from-[#00FFFF]/5 via-transparent to-transparent p-6">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00FFFF] to-transparent" />
+              
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#00FFFF] rounded-full animate-pulse" />
+                  <h3 className="text-xs tracking-widest uppercase text-[#00FFFF] font-bold">
+                    AI Recommendation
+                  </h3>
+                </div>
+                <div className="px-2 py-1 bg-[#00FFFF]/10 rounded text-[10px] text-[#00FFFF] tracking-wider">
+                  LIVE
+                </div>
+              </div>
+              
+              <p className="text-2xl font-black tracking-tight text-white">
+                {recommendedSize}
+              </p>
+            </div>
+          </motion.div>
 
-        {/* Size Guide Link */}
-        <div className="flex justify-between items-center">
+          {/* Size Guide Link */}
           <button 
             onClick={() => toggleSizeGuide(true)} 
-            className="text-xs text-gray-400 hover:text-[#00FFFF] uppercase tracking-widest underline decoration-[#222] underline-offset-4 transition-colors"
+            className="group flex items-center gap-2 text-sm text-gray-400 hover:text-[#00FFFF] transition-colors duration-300"
           >
-            📏 View Size Guide
+            <span className="tracking-wider">📏</span>
+            <span className="tracking-wider uppercase">View Size Guide</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
           </button>
+
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-[#00FFFF]/30 to-transparent" />
+
+          {/* Face Upload */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <FaceUpload />
+          </motion.div>
+
+          {/* Add to Cart */}
+          <motion.div 
+            className="pt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            <CyberButton>Add To Cart • 730 EGP</CyberButton>
+          </motion.div>
         </div>
-
-        {/* Face Upload */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <FaceUpload />
-        </motion.div>
-
-        {/* Add to Cart */}
-        <motion.div 
-          className="mt-auto pt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <CyberButton>Add To Cart // 730 EGP</CyberButton>
-        </motion.div>
       </section>
       
       {/* Modal */}
