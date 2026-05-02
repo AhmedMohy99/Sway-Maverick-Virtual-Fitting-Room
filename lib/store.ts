@@ -19,7 +19,7 @@ export const useSwayStore = create<SwayState>((set) => ({
   height: 162,
   weight: 55,
   fitType: 'oversized',
-  activeTextureUrl: '', // هيتم تبديله برابط الصورة الحقيقية للتيشرت
+  activeTextureUrl: '', 
   faceTextureUrl: null,
   recommendedSize: 'SIZE S',
   isSizeGuideOpen: false,
