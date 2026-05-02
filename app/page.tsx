@@ -32,8 +32,8 @@ export default function ProductPage() {
       </section>
 
       {/* RIGHT: Product Controls */}
-      <section className="w-full lg:w-[40%] h-[50vh] lg:h-full overflow-y-auto custom-scrollbar">
-        <div className="p-6 lg:p-10 flex flex-col gap-8 max-w-xl mx-auto">
+      <section className="w-full lg:w-[40%] h-[50vh] lg:h-full overflow-y-auto overflow-x-hidden custom-scrollbar bg-black">
+        <div className="min-h-full p-6 lg:p-10 flex flex-col gap-8 w-full">
           
           {/* Product Header */}
           <motion.div 
@@ -44,7 +44,7 @@ export default function ProductPage() {
             <h1 className="text-3xl lg:text-4xl font-black tracking-tight uppercase leading-tight">
               The Maverick <span className="text-[#00FFFF]">Phoenix</span>
             </h1>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4">
               <span className="text-2xl font-bold text-[#00FFFF]">730 EGP</span>
               <span className="text-sm text-gray-500 line-through">950 EGP</span>
               <span className="px-3 py-1 bg-[#00FFFF]/10 border border-[#00FFFF]/30 text-[#00FFFF] text-xs font-bold tracking-wider">
@@ -70,7 +70,7 @@ export default function ProductPage() {
               </h3>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Height Input */}
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00FFFF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -131,7 +131,7 @@ export default function ProductPage() {
             <div className="relative border border-[#00FFFF]/30 bg-gradient-to-br from-[#00FFFF]/5 via-transparent to-transparent p-6">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00FFFF] to-transparent" />
               
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-[#00FFFF] rounded-full animate-pulse" />
                   <h3 className="text-xs tracking-widest uppercase text-[#00FFFF] font-bold">
@@ -143,7 +143,7 @@ export default function ProductPage() {
                 </div>
               </div>
               
-              <p className="text-2xl font-black tracking-tight text-white">
+              <p className="text-2xl font-black tracking-tight text-white break-words">
                 {recommendedSize}
               </p>
             </div>
@@ -173,7 +173,7 @@ export default function ProductPage() {
 
           {/* Add to Cart */}
           <motion.div 
-            className="pt-4"
+            className="pt-4 pb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
