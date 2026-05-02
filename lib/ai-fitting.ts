@@ -5,7 +5,6 @@ export function getSmartRecommendation(height: number, weight: number, fitType: 
     if (height < 188 && weight < 88) return "3 (L) - True Oversized Silhouette";
     return "4 (XL) - Maximum Streetwear Drop";
   } else {
-    // Regular Fit Logic
     if (height < 165 && weight < 60) return "1 (S) - Clean Tailored Fit";
     if (height < 175 && weight < 72) return "2 (M) - Natural Shoulder Alignment";
     if (height < 185 && weight < 85) return "3 (L) - Standard Street Fit";
