@@ -1,5 +1,5 @@
 'use client';
-import { useSwayStore } from '@/lib/store';
+import { useSwayStore } from '../../lib/store';
 
 export default function SizeGuideModal() {
   const { isSizeGuideOpen, toggleSizeGuide } = useSwayStore();
