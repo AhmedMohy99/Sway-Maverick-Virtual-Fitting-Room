@@ -1,11 +1,11 @@
 'use client';
 import { useEffect } from 'react';
-import FittingRoom from '@/components/3d/FittingRoom';
-import FaceUpload from '@/components/ui/FaceUpload';
-import CyberButton from '@/components/ui/CyberButton';
-import SizeGuideModal from '@/components/ui/SizeGuideModal';
-import { useSwayStore } from '@/lib/store';
-import { getSmartRecommendation } from '@/lib/ai-fitting';
+import FittingRoom from '../components/3d/FittingRoom';
+import FaceUpload from '../components/ui/FaceUpload';
+import CyberButton from '../components/ui/CyberButton';
+import SizeGuideModal from '../components/ui/SizeGuideModal';
+import { useSwayStore } from '../lib/store';
+import { getSmartRecommendation } from '../lib/ai-fitting';
 import { motion } from 'framer-motion';
 
 export default function ProductPage() {
