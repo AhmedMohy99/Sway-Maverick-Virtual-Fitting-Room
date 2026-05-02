@@ -1,29 +1,31 @@
-// lib/store.ts
 import { create } from 'zustand';
 
 interface SwayState {
   height: number;
   weight: number;
-  fitType: 'oversized' | 'regular';
+  fitType: 'oversized' | 'regular' | 'sweatpants';
   activeTextureUrl: string;
   faceTextureUrl: string | null;
   recommendedSize: string;
+  isSizeGuideOpen: boolean;
   setBodyData: (h: number, w: number) => void;
-  setProduct: (textureUrl: string, fit: 'oversized' | 'regular') => void;
+  setProduct: (textureUrl: string, fit: 'oversized' | 'regular' | 'sweatpants') => void;
   setFaceTexture: (url: string) => void;
   updateRecommendation: (size: string) => void;
+  toggleSizeGuide: (isOpen: boolean) => void;
 }
 
 export const useSwayStore = create<SwayState>((set) => ({
-  height: 175,
-  weight: 70,
+  height: 162,
+  weight: 55,
   fitType: 'oversized',
-  activeTextureUrl: '/textures/maverick_phoenix_white.jpg',
+  activeTextureUrl: '', // هيتم تبديله برابط الصورة الحقيقية للتيشرت
   faceTextureUrl: null,
-  recommendedSize: '3 (L)',
-  
+  recommendedSize: 'SIZE S',
+  isSizeGuideOpen: false,
   setBodyData: (h, w) => set({ height: h, weight: w }),
-  setProduct: (textureUrl, fit) => set({ activeTextureUrl: textureUrl, fitType: fit }),
+  setProduct: (url, fit) => set({ activeTextureUrl: url, fitType: fit }),
   setFaceTexture: (url) => set({ faceTextureUrl: url }),
   updateRecommendation: (size) => set({ recommendedSize: size }),
+  toggleSizeGuide: (isOpen) => set({ isSizeGuideOpen: isOpen }),
 }));
