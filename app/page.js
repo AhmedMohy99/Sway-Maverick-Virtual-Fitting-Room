@@ -1,37 +1,36 @@
-// app/page.tsx
 'use client';
 import { useEffect } from 'react';
 import FittingRoom from '@/components/3d/FittingRoom';
+import FaceUpload from '@/components/ui/FaceUpload';
+import CyberButton from '@/components/ui/CyberButton';
+import SizeGuideModal from '@/components/ui/SizeGuideModal';
 import { useSwayStore } from '@/lib/store';
 import { getSmartRecommendation } from '@/lib/ai-fitting';
 import { motion } from 'framer-motion';
 
 export default function ProductPage() {
-  const { height, weight, fitType, recommendedSize, setBodyData, updateRecommendation } = useSwayStore();
+  const { height, weight, fitType, recommendedSize, setBodyData, updateRecommendation, toggleSizeGuide } = useSwayStore();
 
-  // Re-run AI Recommendation when body data changes
   useEffect(() => {
     const rec = getSmartRecommendation(height, weight, fitType);
     updateRecommendation(rec);
   }, [height, weight, fitType, updateRecommendation]);
 
   return (
-    <main className="flex w-full h-screen bg-black text-white font-mono overflow-hidden">
+    <main className="flex flex-col lg:flex-row w-full h-screen bg-black text-white font-mono overflow-hidden">
       
-      {/* LEFT: 3D Immersive Viewer */}
-      <section className="w-[60%] h-full relative border-r border-[#111]">
+      {/* LEFT: 3D Viewer */}
+      <section className="w-full lg:w-[60%] h-[50vh] lg:h-full relative border-b lg:border-r border-[#111]">
         <FittingRoom />
       </section>
 
       {/* RIGHT: Product Controls */}
-      <section className="w-[40%] h-full overflow-y-auto p-12 flex flex-col gap-8 custom-scrollbar">
-        
+      <section className="w-full lg:w-[40%] h-[50vh] lg:h-full overflow-y-auto p-6 lg:p-12 flex flex-col gap-8 custom-scrollbar">
         <div className="border-b border-[#222] pb-6">
-          <h1 className="text-3xl font-black tracking-widest uppercase">The Maverick Phoenix</h1>
+          <h1 className="text-2xl lg:text-3xl font-black tracking-widest uppercase">The Maverick Phoenix</h1>
           <p className="text-[#00FFFF] mt-2 tracking-widest text-sm">730 EGP</p>
         </div>
 
-        {/* Digital Twin Inputs */}
         <div className="space-y-4">
           <h3 className="text-[11px] text-gray-400 tracking-[0.2em]">YOUR MEASUREMENTS</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -56,7 +55,6 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* AI Recommendation Output */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -68,17 +66,21 @@ export default function ProductPage() {
           <p className="text-lg font-bold">{recommendedSize}</p>
         </motion.div>
 
-        {/* Face Mapping Trigger */}
-        <button className="w-full border border-dashed border-gray-600 hover:border-[#00FFFF] hover:text-[#00FFFF] transition-all p-4 text-xs tracking-[0.2em] uppercase">
-          [+] Upload Face Map
-        </button>
+        <div className="flex justify-between items-center">
+          <button onClick={() => toggleSizeGuide(true)} className="text-xs text-gray-400 hover:text-[#00FFFF] uppercase tracking-widest underline decoration-[#222] underline-offset-4">
+            View Size Guide
+          </button>
+        </div>
 
-        {/* Add to Cart */}
-        <button className="mt-auto w-full bg-[#00FFFF] text-black font-bold py-5 tracking-[0.2em] hover:bg-white transition-colors uppercase text-sm shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]">
-          Add To Cart // 730 EGP
-        </button>
+        <FaceUpload />
 
+        <div className="mt-auto pt-8">
+          <CyberButton>Add To Cart // 730 EGP</CyberButton>
+        </div>
       </section>
+      
+      {/* Modal */}
+      <SizeGuideModal />
     </main>
   );
 }
