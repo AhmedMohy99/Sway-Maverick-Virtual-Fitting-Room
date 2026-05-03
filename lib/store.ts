@@ -23,7 +23,6 @@ interface OutfitItem {
 }
 
 interface SwayState {
-  // Body & AI
   height: number;
   weight: number;
   fitType: string;
@@ -31,7 +30,6 @@ interface SwayState {
   setBodyData: (h: number, w: number) => void;
   updateRecommendation: (size: string) => void;
 
-  // UI
   isSizeGuideOpen: boolean;
   toggleSizeGuide: (isOpen: boolean) => void;
   isAutoRotate: boolean;
@@ -39,7 +37,6 @@ interface SwayState {
   selectedCategory: 'tops' | 'bottoms';
   setSelectedCategory: (cat: 'tops' | 'bottoms') => void;
 
-  // Outfits
   currentOutfit: {
     top: OutfitItem | null;
     bottom: OutfitItem | null;
@@ -49,7 +46,6 @@ interface SwayState {
   changeTopColor: (colorName: string, image: string) => void;
   changeBottomColor: (colorName: string, image: string) => void;
 
-  // 3D Textures
   topTexture: string | null;
   bottomTexture: string | null;
   faceTexture: string | null;
@@ -72,10 +68,7 @@ export const useSwayStore = create<SwayState>((set) => ({
   selectedCategory: 'tops',
   setSelectedCategory: (cat) => set({ selectedCategory: cat }),
 
-  currentOutfit: {
-    top: null,
-    bottom: null,
-  },
+  currentOutfit: { top: null, bottom: null },
   selectTop: (item) => set((state) => ({
     currentOutfit: { ...state.currentOutfit, top: item },
     topTexture: item.image
@@ -87,20 +80,14 @@ export const useSwayStore = create<SwayState>((set) => ({
   changeTopColor: (colorName, image) => set((state) => {
     if (!state.currentOutfit.top) return state;
     return {
-      currentOutfit: {
-        ...state.currentOutfit,
-        top: { ...state.currentOutfit.top, color: colorName, image: image }
-      },
+      currentOutfit: { ...state.currentOutfit, top: { ...state.currentOutfit.top, color: colorName, image: image } },
       topTexture: image
     };
   }),
   changeBottomColor: (colorName, image) => set((state) => {
     if (!state.currentOutfit.bottom) return state;
     return {
-      currentOutfit: {
-        ...state.currentOutfit,
-        bottom: { ...state.currentOutfit.bottom, color: colorName, image: image }
-      },
+      currentOutfit: { ...state.currentOutfit, bottom: { ...state.currentOutfit.bottom, color: colorName, image: image } },
       bottomTexture: image
     };
   }),
