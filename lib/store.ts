@@ -37,10 +37,7 @@ interface SwayState {
   selectedCategory: 'tops' | 'bottoms';
   setSelectedCategory: (cat: 'tops' | 'bottoms') => void;
 
-  currentOutfit: {
-    top: OutfitItem | null;
-    bottom: OutfitItem | null;
-  };
+  currentOutfit: { top: OutfitItem | null; bottom: OutfitItem | null; };
   selectTop: (item: OutfitItem) => void;
   selectBottom: (item: OutfitItem) => void;
   changeTopColor: (colorName: string, image: string) => void;
@@ -68,29 +65,7 @@ export const useSwayStore = create<SwayState>((set) => ({
   selectedCategory: 'tops',
   setSelectedCategory: (cat) => set({ selectedCategory: cat }),
 
-  // Start with default outfit pre-selected
-  currentOutfit: { 
-    top: {
-      id: 'tshirt-eternity-protocol',
-      name: 'Eternity Protocol White',
-      type: 'tshirt',
-      image: '/eternity-protocol-white.png',
-      color: 'White',
-      size: 'M'
-    }, 
-    bottom: {
-      id: 'pants-black-flux',
-      name: 'Black Flux Sweatpants',
-      type: 'pants',
-      image: '/black-flux-sweatpants.png',
-      color: 'Black',
-      size: 'M'
-    }
-  },
-  
-  topTexture: '/eternity-protocol-white.png',
-  bottomTexture: '/black-flux-sweatpants.png',
-  
+  currentOutfit: { top: null, bottom: null },
   selectTop: (item) => set((state) => ({
     currentOutfit: { ...state.currentOutfit, top: item },
     topTexture: item.image
@@ -102,24 +77,20 @@ export const useSwayStore = create<SwayState>((set) => ({
   changeTopColor: (colorName, image) => set((state) => {
     if (!state.currentOutfit.top) return state;
     return {
-      currentOutfit: { 
-        ...state.currentOutfit, 
-        top: { ...state.currentOutfit.top, color: colorName, image: image } 
-      },
+      currentOutfit: { ...state.currentOutfit, top: { ...state.currentOutfit.top, color: colorName, image: image } },
       topTexture: image
     };
   }),
   changeBottomColor: (colorName, image) => set((state) => {
     if (!state.currentOutfit.bottom) return state;
     return {
-      currentOutfit: { 
-        ...state.currentOutfit, 
-        bottom: { ...state.currentOutfit.bottom, color: colorName, image: image } 
-      },
+      currentOutfit: { ...state.currentOutfit, bottom: { ...state.currentOutfit.bottom, color: colorName, image: image } },
       bottomTexture: image
     };
   }),
 
+  topTexture: null,
+  bottomTexture: null,
   faceTexture: null,
   faceTextureUrl: null,
   setFaceTexture: (url) => set({ faceTexture: url, faceTextureUrl: url }),
