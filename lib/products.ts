@@ -1,3 +1,5 @@
+export const SIZES = ['S', 'M', 'L', 'XL', '2XL'];
+
 export const PRODUCT_DATA = {
   products: [
     {
