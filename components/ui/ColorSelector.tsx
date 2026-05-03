@@ -6,7 +6,7 @@ interface ColorSelectorProps {
   products: Product[];
 }
 
-export default function ColorSelector({ products }: ProductSelectorProps) {
+export default function ColorSelector({ products }: ColorSelectorProps) {
   const { currentOutfit, changeTopColor, changeBottomColor, selectedCategory } = useSwayStore();
 
   // Get current product
