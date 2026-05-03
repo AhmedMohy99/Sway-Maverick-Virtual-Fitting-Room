@@ -1,114 +1,190 @@
 'use client';
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import FaceUpload from '../components/ui/FaceUpload';
-import CyberButton from '../components/ui/CyberButton';
-import SizeGuideModal from '../components/ui/SizeGuideModal';
-import AutoRotateToggle from '../components/ui/AutoRotateToggle';
-import ProductSelector from '../components/ui/ProductSelector';
-import ColorSelector from '../components/ui/ColorSelector';
 import { useSwayStore } from '../lib/store';
 import { PRODUCT_DATA } from '../lib/products';
 import { getSmartRecommendation } from '../lib/ai-fitting';
-import { motion } from 'framer-motion';
-import { Ruler, Weight } from 'lucide-react';
 
-const FittingRoom = dynamic(() => import('../components/3d/FittingRoom'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full bg-[#050505] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 border-2 border-[#00FFFF] border-t-transparent rounded-full animate-spin" />
-        <span className="text-[#00FFFF] font-mono tracking-widest text-xs">LOADING SWAY ENGINE...</span>
-      </div>
-    </div>
-  ),
-});
+// استدعاء محرك الـ 3D
+const FittingRoom = dynamic(() => import('../components/3d/FittingRoom'), { ssr: false });
 
 export default function ProductPage() {
-  const { height, weight, fitType, recommendedSize, setBodyData, updateRecommendation, toggleSizeGuide, currentOutfit } = useSwayStore();
+  const { 
+    height, weight, fitType, recommendedSize, 
+    setBodyData, updateRecommendation, toggleSizeGuide, 
+    currentOutfit, selectTop, selectBottom 
+  } = useSwayStore();
 
+  // تحديث الذكاء الاصطناعي للمقاسات
   useEffect(() => {
     const rec = getSmartRecommendation(height, weight, fitType);
     updateRecommendation(rec);
   }, [height, weight, fitType, updateRecommendation]);
 
-  const totalPrice = (currentOutfit.top ? 730 : 0) + (currentOutfit.bottom ? 660 : 0) || 730;
+  // دالة للتعامل مع تغيير المنتج من القائمة المنسدلة
+  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    const product = PRODUCT_DATA.products.find(p => p.id === selectedId);
+    
+    if (product) {
+      const outfitItem = {
+        id: product.id,
+        name: product.name,
+        type: product.type,
+        image: product.colors[0].image, // بياخد أول لون افتراضياً
+        color: product.colors[0].name,
+        size: 'M'
+      };
+      
+      if (product.group === 'tops') selectTop(outfitItem);
+      else selectBottom(outfitItem);
+    }
+  };
 
   return (
-    <main className="w-full h-screen bg-black text-white flex flex-col lg:flex-row overflow-hidden">
+    <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden">
       
-      {/* LEFT: 3D Viewer */}
-      <div className="w-full h-[50vh] lg:h-full lg:w-3/5 relative border-b lg:border-b-0 lg:border-r border-[#1a1a1a]">
-        <FittingRoom />
-        <div className="absolute top-6 left-6 z-20">
-          <AutoRotateToggle />
+      {/* Top Banner */}
+      <div className="w-full bg-[#00e5ff] text-black text-xs md:text-sm font-bold py-2 px-4 flex justify-between items-center uppercase tracking-wider">
+        <span>Designed for those who CREATE THEIR OWN RULE!</span>
+        <span className="hidden md:inline">Crafted For The Maverick</span>
+      </div>
+
+      {/* Header */}
+      <header className="flex justify-between items-center px-6 md:px-12 py-5 border-b border-[#1a1a1a] bg-[#0a0a0a]">
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-black tracking-widest text-[#00e5ff] italic">SWAY</h1>
+          <p className="text-[10px] tracking-widest text-gray-400 uppercase">Crafted for the Maverick</p>
         </div>
-      </div>
+        <nav className="hidden md:flex gap-8 text-xs font-bold tracking-widest uppercase text-gray-300">
+          <a href="#" className="hover:text-[#00e5ff] transition-colors text-[#00e5ff]">Home</a>
+          <a href="#" className="hover:text-[#00e5ff] transition-colors">Shop</a>
+          <a href="#" className="hover:text-[#00e5ff] transition-colors">How It Started</a>
+          <a href="#" className="hover:text-[#00e5ff] transition-colors">Our Story</a>
+          <a href="#" className="hover:text-[#00e5ff] transition-colors">Size Guide</a>
+        </nav>
+        <div className="flex gap-4 text-gray-300">
+          <span className="cursor-pointer hover:text-[#00e5ff]">🔍</span>
+          <span className="cursor-pointer hover:text-[#00e5ff]">🛒 <span className="text-[#00e5ff]">0</span></span>
+          <span className="cursor-pointer hover:text-[#00e5ff]">En ⌄</span>
+        </div>
+      </header>
 
-      {/* RIGHT: Product Controls */}
-      <div className="w-full h-[50vh] lg:h-full lg:w-2/5 bg-black overflow-y-auto custom-scrollbar p-6 lg:p-8 space-y-6">
+      {/* Main Content */}
+      <main className="max-w-[1400px] mx-auto p-4 md:p-8 flex flex-col lg:flex-row gap-8 lg:gap-12 mt-4">
         
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          <ProductSelector products={PRODUCT_DATA.products} />
-          <ColorSelector products={PRODUCT_DATA.products} />
-        </motion.div>
+        {/* Left: 3D Model Container */}
+        <div className="w-full lg:w-[55%] h-[50vh] lg:h-[700px] bg-[#0f0f0f] rounded-xl overflow-hidden border border-[#222] shadow-2xl relative">
+          <FittingRoom />
+        </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-[#00FFFF]/30 to-transparent" />
-
-        {/* Measurements */}
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-5 bg-[#00FFFF] rounded-full" />
-            <h3 className="text-xs font-bold tracking-widest uppercase text-gray-400">Your Measurements</h3>
+        {/* Right: Product Details & Controls */}
+        <div className="w-full lg:w-[45%] flex flex-col gap-6">
+          
+          {/* Title & Price */}
+          <div className="border-b border-[#222] pb-4">
+            <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight">
+              {currentOutfit.top?.name || 'The Maverick Phoenix'} <br/>
+              <span className="text-gray-400 text-2xl">({currentOutfit.top?.color || 'White'})</span>
+            </h1>
+            <p className="text-[#00e5ff] text-2xl font-bold">EGP 730</p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="relative group">
-              <div className="relative bg-[#0a0a0a] border border-[#222] p-4 transition-all duration-300 group-hover:border-[#00FFFF]/50">
-                <div className="flex items-center gap-2 mb-2"><Ruler className="w-3 h-3 text-[#00FFFF]" /><span className="text-[10px] tracking-wider text-gray-500 uppercase">Height</span></div>
-                <div className="flex items-baseline gap-1">
-                  <input type="number" value={height} onChange={(e) => setBodyData(Number(e.target.value), weight)} className="bg-transparent outline-none text-2xl font-bold text-white w-full" min="140" max="220" />
-                  <span className="text-xs text-gray-500">cm</span>
-                </div>
+
+          {/* Controls Form */}
+          <div className="flex flex-col gap-5">
+            
+            {/* Gender Select */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Gender (المجسم):</label>
+              <select className="w-full bg-[#111] border border-[#333] rounded p-3 text-white focus:border-[#00e5ff] focus:ring-1 focus:ring-[#00e5ff] outline-none transition-all cursor-pointer">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            {/* Height & Weight Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Height (cm):</label>
+                <input 
+                  type="number" 
+                  value={height}
+                  onChange={(e) => setBodyData(Number(e.target.value), weight)}
+                  className="w-full bg-[#111] border border-[#333] rounded p-3 text-white focus:border-[#00e5ff] outline-none transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Weight (kg):</label>
+                <input 
+                  type="number" 
+                  value={weight}
+                  onChange={(e) => setBodyData(height, Number(e.target.value))}
+                  className="w-full bg-[#111] border border-[#333] rounded p-3 text-white focus:border-[#00e5ff] outline-none transition-all"
+                />
               </div>
             </div>
-            <div className="relative group">
-              <div className="relative bg-[#0a0a0a] border border-[#222] p-4 transition-all duration-300 group-hover:border-[#00FFFF]/50">
-                <div className="flex items-center gap-2 mb-2"><Weight className="w-3 h-3 text-[#00FFFF]" /><span className="text-[10px] tracking-wider text-gray-500 uppercase">Weight</span></div>
-                <div className="flex items-baseline gap-1">
-                  <input type="number" value={weight} onChange={(e) => setBodyData(height, Number(e.target.value))} className="bg-transparent outline-none text-2xl font-bold text-white w-full" min="40" max="150" />
-                  <span className="text-xs text-gray-500">kg</span>
-                </div>
-              </div>
+
+            {/* Product Select */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Select Product:</label>
+              <select 
+                onChange={handleProductChange}
+                className="w-full bg-[#111] border border-[#333] rounded p-3 text-white focus:border-[#00e5ff] outline-none transition-all cursor-pointer"
+              >
+                <optgroup label="Tops">
+                  {PRODUCT_DATA.products.filter(p => p.group === 'tops').map(product => (
+                    <option key={product.id} value={product.id}>{product.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Bottoms">
+                  {PRODUCT_DATA.products.filter(p => p.group === 'bottoms').map(product => (
+                    <option key={product.id} value={product.id}>{product.name}</option>
+                  ))}
+                </optgroup>
+              </select>
             </div>
-          </div>
-        </motion.div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} key={recommendedSize} transition={{ delay: 0.2 }} className="relative overflow-hidden">
-          <div className="relative border border-[#00FFFF]/30 bg-gradient-to-br from-[#00FFFF]/5 via-transparent to-transparent p-5">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00FFFF] to-transparent" />
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-[#00FFFF] rounded-full animate-pulse" />
-                <h3 className="text-[10px] tracking-widest uppercase text-[#00FFFF] font-bold">AI Recommendation</h3>
-              </div>
+            {/* Fit Type (Readonly like screenshot) */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Fit Type:</label>
+              <input 
+                type="text" 
+                value="Over Size Fit" 
+                readOnly 
+                className="w-full bg-[#0a0a0a] border border-[#00e5ff]/50 rounded p-3 text-[#00e5ff] font-bold outline-none cursor-default"
+              />
             </div>
-            <p className="text-xl font-black tracking-tight text-white">{recommendedSize}</p>
+
+            {/* Size Select (AI Driven) */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Select Size:</label>
+              <select className="w-full bg-[#111] border border-[#333] rounded p-3 text-white focus:border-[#00e5ff] outline-none transition-all cursor-pointer appearance-none">
+                <option>{recommendedSize} ✓ Recommended</option>
+                <option>1 (S)</option>
+                <option>2 (M)</option>
+                <option>3 (L)</option>
+                <option>4 (XL)</option>
+                <option>5 (XXL)</option>
+              </select>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3 mt-2">
+              <button 
+                onClick={() => toggleSizeGuide(true)}
+                className="w-full py-4 bg-transparent border-2 border-[#333] hover:border-[#00e5ff] text-white font-bold tracking-widest uppercase transition-all flex justify-center items-center gap-2 rounded"
+              >
+                <span>📏</span> VIEW SIZE GUIDE
+              </button>
+              
+              <button className="w-full py-4 bg-[#00e5ff] hover:bg-white text-black font-black tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(0,229,255,0.3)] hover:shadow-[0_0_25px_rgba(0,229,255,0.6)] rounded">
+                ADD TO CART
+              </button>
+            </div>
+
           </div>
-        </motion.div>
-
-        <button onClick={() => toggleSizeGuide(true)} className="group flex items-center gap-2 text-xs text-gray-400 hover:text-[#00FFFF] transition-colors duration-300">
-          <span className="tracking-wider">📏</span>
-          <span className="tracking-wider uppercase">View Size Guide</span>
-        </button>
-
-        <div className="h-px bg-gradient-to-r from-transparent via-[#00FFFF]/30 to-transparent" />
-
-        <FaceUpload />
-        <CyberButton>Add To Cart • {totalPrice} EGP</CyberButton>
-      </div>
-      
-      <SizeGuideModal />
-    </main>
+        </div>
+      </main>
+    </div>
   );
 }
