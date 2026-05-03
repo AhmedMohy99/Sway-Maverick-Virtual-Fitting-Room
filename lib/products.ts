@@ -3,8 +3,8 @@ export const SIZES = ['S', 'M', 'L', 'XL', '2XL'];
 export const PRODUCT_DATA = {
   products: [
     {
-      id: 'tshirt-maverick-phoenix',
-      name: 'The Maverick Phoenix',
+      id: 'tshirt-eternity-protocol',
+      name: 'Eternity Protocol White',
       type: 'tshirt',
       group: 'tops',
       category: 'T-Shirts',
@@ -13,8 +13,11 @@ export const PRODUCT_DATA = {
       currency: 'EGP',
       isNew: true,
       colors: [
-        { name: 'Dark Black', hex: '#000000', image: '/maverick-phoenix-black.png' },
-        { name: 'White Base', hex: '#FFFFFF', image: '/maverick-phoenix-white.png' }
+        { 
+          name: 'White', 
+          hex: '#FFFFFF', 
+          image: '/eternity-protocol-white.png' 
+        }
       ]
     },
     {
@@ -28,7 +31,29 @@ export const PRODUCT_DATA = {
       currency: 'EGP',
       isNew: false,
       colors: [
-        { name: 'Dark Black', hex: '#000000', image: '/black-flux-sweatpants.png' }
+        { 
+          name: 'Black', 
+          hex: '#000000', 
+          image: '/black-flux-sweatpants.png' 
+        }
+      ]
+    },
+    {
+      id: 'pants-light-flux',
+      name: 'Light Flux Sweatpants',
+      type: 'pants',
+      group: 'bottoms',
+      category: 'Sweatpants',
+      baseImage: 'https://ik.imagekit.io/5yvgym2qm/tr:w-1000,h-1500/products/696e0bcb55259/69e75f1c28fccproductimage699c03358e601.jpg',
+      basePrice: 660,
+      currency: 'EGP',
+      isNew: true,
+      colors: [
+        { 
+          name: 'Light Gray', 
+          hex: '#D3D3D3', 
+          image: '/light-flux-sweatpants.png' 
+        }
       ]
     }
   ]
