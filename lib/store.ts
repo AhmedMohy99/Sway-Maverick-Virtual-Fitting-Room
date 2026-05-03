@@ -1,5 +1,17 @@
 import { create } from 'zustand';
 
+// 1. ضفنا تعريف الـ Product اللي الـ ColorSelector بيدور عليه
+export interface Product {
+  id: string;
+  name: string;
+  type: string;
+  image?: string;
+  tryOnImage?: string;
+  variants?: any[];
+  colors?: any[];
+  [key: string]: any; // دي بتخلي TypeScript يقبل أي بيانات إضافية بدون ما يعترض
+}
+
 interface SwayState {
   // بيانات الجسم والقياسات
   height: number;
@@ -23,7 +35,7 @@ interface SwayState {
   updateRecommendation: (size: string) => void;
   toggleSizeGuide: (isOpen: boolean) => void;
   setAutoRotate: (active: boolean) => void; 
-  toggleAutoRotate: () => void; // الدالة اللي كان بيدور عليها
+  toggleAutoRotate: () => void;
   setTop: (url: string, fit: string) => void;
   setBottom: (url: string, fit: string) => void;
   setFace: (url: string) => void;
@@ -47,7 +59,7 @@ export const useSwayStore = create<SwayState>((set) => ({
   updateRecommendation: (size) => set({ recommendedSize: size }),
   toggleSizeGuide: (isOpen) => set({ isSizeGuideOpen: isOpen }),
   setAutoRotate: (active) => set({ isAutoRotate: active }),
-  toggleAutoRotate: () => set((state) => ({ isAutoRotate: !state.isAutoRotate })), // التنفيذ بتاعها
+  toggleAutoRotate: () => set((state) => ({ isAutoRotate: !state.isAutoRotate })),
   setTop: (url, fit) => set({ topTexture: url, topFit: fit, fitType: fit }),
   setBottom: (url, fit) => set({ bottomTexture: url, bottomFit: fit }),
   setFace: (url) => set({ faceTexture: url }),
