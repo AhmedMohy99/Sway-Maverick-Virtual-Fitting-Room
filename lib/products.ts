@@ -1,33 +1,28 @@
-export const SIZES = ['S', 'M', 'L', 'XL', '2XL'];
-
-export const TRY_TEST_PRODUCTS = [
-  {
-    id: '1',
-    name: 'The Maverick Phoenix',
-    price: '730.00',
-    type: 'top', // علوي
-    fit: 'oversized',
-    image: 'https://ik.imagekit.io/5yvgym2qm/...',
-    variants: [
-      { colorName: 'Dark Black', tryOnImage: '/maverick-phoenix-black.png' },
-      { colorName: 'White Base', tryOnImage: '/maverick-phoenix-white.png' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'The Powder Blue Venture Tee',
-    price: '440.00',
-    type: 'top',
-    fit: 'regular',
-    tryOnImage: '/powder-blue-venture-tee.png',
-  },
-  {
-    id: '3',
-    name: 'Black Flux Sweatpants',
-    price: '660.00',
-    type: 'bottom', // سفلي
-    fit: 'pants',
-    tryOnImage: '/black-flux-sweatpants.png',
-  },
-  // ... أضف باقي المنتجات هنا مع تحديد type: 'top' أو 'bottom'
-];
+// جوه ملف lib/products.ts
+export const PRODUCT_DATA = {
+  "products": [
+    {
+      "id": "tshirt-maverick-phoenix",
+      "name": "The Maverick Phoenix",
+      "type": "tshirt",
+      // ... باقي البيانات
+      "colors": [ // <-- هنا بتضيف الألوان الخاصة بالقطعة دي
+        {
+          "name": "White",
+          "hex": "#FFFFFF",
+          "image": "/maverick-phoenix-white.png" // صورة التيشيرت الأبيض بخلفية شفافة
+        },
+        {
+          "name": "Navy",
+          "hex": "#001F3F",
+          "image": "/maverick-phoenix-navy.png" // صورة التيشيرت الكحلي
+        },
+        {
+          "name": "Black",
+          "hex": "#000000",
+          "image": "/maverick-phoenix-black.png" // صورة التيشيرت الأسود
+        }
+      ]
+    }
+  ]
+};
