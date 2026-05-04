@@ -1,16 +1,34 @@
 'use client';
 import { useGLTF } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useSwayStore } from '../../lib/store';
 
 export default function AvatarModel() {
-  const { topTexture, bottomTexture, faceTexture } = useSwayStore();
+  // سحبنا الطول والوزن من الـ Store عشان نتحكم فيهم
+  const { topTexture, bottomTexture, faceTexture, height, weight } = useSwayStore();
   const { scene } = useGLTF('/avatar.glb');
+  const modelRef = useRef<THREE.Group>(null);
 
-  // بنعمل نسخة من الموديل عشان منبوظش النسخة الأصلية المخبأة (Cached)
   const clonedScene = useMemo(() => scene.clone(), [scene]);
 
+  // 1. محرك الذكاء لتغيير حجم الموديل بناءً على الـ CM والـ KG
+  useEffect(() => {
+    if (!modelRef.current) return;
+
+    // المقاسات الأساسية للموديل الافتراضي (تقدر تعدلها لو موديلك مختلف)
+    const baseHeight = 175; 
+    const baseWeight = 70;
+
+    // حساب نسبة التكبير/التصغير
+    const heightScale = height / baseHeight;
+    const weightScale = weight / baseWeight; // الوزن بيأثر على العرض والعمق
+
+    // تطبيق المقاسات الجديدة على الموديل (X, Y, Z)
+    modelRef.current.scale.set(weightScale, heightScale, weightScale);
+  }, [height, weight]);
+
+  // 2. محرك الألوان وضبط اللوجو
   useEffect(() => {
     if (!clonedScene) return;
 
@@ -18,26 +36,34 @@ export default function AvatarModel() {
 
     clonedScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        // 🚀 الحل السحري: فصل الخامات عن بعضها عشان الصور متدخلش في بعض
         if (child.material) {
           child.material = child.material.clone();
         }
 
         const name = child.name.toLowerCase();
 
-        // 1. تطبيق التيشيرت فقط
+        // تطبيق التيشيرت وضبط مكان اللوجو
         if (name.includes('shirt') || name.includes('top') || name.includes('tshirt')) {
           if (topTexture) {
             textureLoader.load(topTexture, (texture) => {
               texture.flipY = false;
               texture.colorSpace = THREE.SRGBColorSpace;
+
+              // 🎯 معامل ضبط ارتفاع اللوجو ليظهر كطباعة احترافية على الصدر
+              const SHIRT_HEIGHT_FIX = 0.15; 
+              
+              texture.wrapS = THREE.RepeatWrapping;
+              texture.wrapT = THREE.RepeatWrapping;
+              texture.repeat.set(1, 1);
+              texture.offset.set(0, SHIRT_HEIGHT_FIX);
+
               child.material.map = texture;
               child.material.needsUpdate = true;
             });
           }
         }
         
-        // 2. تطبيق البنطلون فقط (استخدمنا else if عشان نمنع التداخل)
+        // تطبيق البنطلون
         else if (name.includes('pant') || name.includes('leg') || name.includes('bottom') || name.includes('sweat')) {
           if (bottomTexture) {
             textureLoader.load(bottomTexture, (texture) => {
@@ -49,7 +75,7 @@ export default function AvatarModel() {
           }
         }
         
-        // 3. تطبيق الوجه
+        // تطبيق الوجه
         else if (name.includes('head') || name.includes('face')) {
           if (faceTexture) {
             textureLoader.load(faceTexture, (texture) => {
@@ -64,5 +90,5 @@ export default function AvatarModel() {
     });
   }, [clonedScene, topTexture, bottomTexture, faceTexture]);
 
-  return <primitive object={clonedScene} />;
+  return <primitive ref={modelRef} object={clonedScene} />;
 }
