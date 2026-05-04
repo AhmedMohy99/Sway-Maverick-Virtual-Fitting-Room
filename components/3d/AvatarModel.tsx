@@ -1,54 +1,68 @@
 'use client';
-import { useGLTF, useTexture } from '@react-three/drei';
-import { useEffect } from 'react';
+import { useGLTF } from '@react-three/drei';
+import { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { useSwayStore } from '../../lib/store';
 
 export default function AvatarModel() {
-  const { fitType, activeTextureUrl, faceTextureUrl } = useSwayStore();
-  
-  // غير اسم avatar.glb لو انت مسميه حاجة تانية في فولدر public
-  const modelPath = '/avatar.glb'; 
-  const { scene } = useGLTF(modelPath);
-  
-  const clothingTexture = activeTextureUrl ? useTexture(activeTextureUrl) : null;
-  if (clothingTexture) {
-    clothingTexture.flipY = false;
-    clothingTexture.colorSpace = THREE.SRGBColorSpace;
-  }
+  const { topTexture, bottomTexture, faceTexture } = useSwayStore();
+  const { scene } = useGLTF('/avatar.glb');
 
-  const faceTexture = faceTextureUrl ? useTexture(faceTextureUrl) : null;
-  if (faceTexture) {
-    faceTexture.flipY = false;
-    faceTexture.colorSpace = THREE.SRGBColorSpace;
-  }
+  // بنعمل نسخة من الموديل عشان منبوظش النسخة الأصلية المخبأة (Cached)
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
 
   useEffect(() => {
-    if (!scene) return;
-    scene.traverse((child) => {
+    if (!clonedScene) return;
+
+    const textureLoader = new THREE.TextureLoader();
+
+    clonedScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        if (!child.userData.isMaterialSeparated) {
+        // 🚀 الحل السحري: فصل الخامات عن بعضها عشان الصور متدخلش في بعض
+        if (child.material) {
           child.material = child.material.clone();
-          child.userData.isMaterialSeparated = true;
         }
 
         const name = child.name.toLowerCase();
-        const isTshirt = (name.includes('shirt') || name.includes('tshirt') || name.includes('top')) 
-                      && !name.includes('skin') && !name.includes('body') && !name.includes('arm');
 
-        if (isTshirt && clothingTexture) {
-          child.material.map = clothingTexture;
-          child.material.color.setHex(0xffffff);
-          child.material.needsUpdate = true;
-        } else if (faceTexture && (name.includes('head') || name.includes('face'))) {
-          child.material.map = faceTexture;
-          child.material.color.setHex(0xffffff);
-          child.material.roughness = 0.5;
-          child.material.needsUpdate = true;
+        // 1. تطبيق التيشيرت فقط
+        if (name.includes('shirt') || name.includes('top') || name.includes('tshirt')) {
+          if (topTexture) {
+            textureLoader.load(topTexture, (texture) => {
+              texture.flipY = false;
+              texture.colorSpace = THREE.SRGBColorSpace;
+              child.material.map = texture;
+              child.material.needsUpdate = true;
+            });
+          }
+        }
+        
+        // 2. تطبيق البنطلون فقط (استخدمنا else if عشان نمنع التداخل)
+        else if (name.includes('pant') || name.includes('leg') || name.includes('bottom') || name.includes('sweat')) {
+          if (bottomTexture) {
+            textureLoader.load(bottomTexture, (texture) => {
+              texture.flipY = false;
+              texture.colorSpace = THREE.SRGBColorSpace;
+              child.material.map = texture;
+              child.material.needsUpdate = true;
+            });
+          }
+        }
+        
+        // 3. تطبيق الوجه
+        else if (name.includes('head') || name.includes('face')) {
+          if (faceTexture) {
+            textureLoader.load(faceTexture, (texture) => {
+              texture.flipY = false;
+              texture.colorSpace = THREE.SRGBColorSpace;
+              child.material.map = texture;
+              child.material.needsUpdate = true;
+            });
+          }
         }
       }
     });
-  }, [scene, clothingTexture, faceTexture]);
+  }, [clonedScene, topTexture, bottomTexture, faceTexture]);
 
-  return <primitive object={scene} />;
+  return <primitive object={clonedScene} />;
 }
